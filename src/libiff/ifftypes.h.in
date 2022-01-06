@@ -45,6 +45,19 @@ typedef unsigned int IFF_ULong;
 /** A 4 byte ID type */
 typedef char IFF_ID[IFF_ID_SIZE];
 
+typedef struct
+{
+   int (*read) (void *userData, char *data, int size);
+   int (*write) (void *userData, char *data, int size);
+   int (*eof) (void *userData);
+} io_callbacks;
+
+typedef struct
+{
+   io_callbacks io;
+   void *userData;
+} io_context;
+
 #define TRUE 1
 #define FALSE 0
 

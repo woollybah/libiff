@@ -68,7 +68,7 @@ IFF_Chunk *IFF_allocateChunk(const char *chunkId, const size_t chunkSize);
  * @param extensionLength Length of the extension array
  * @return A chunk hierarchy derived from the IFF file, or NULL if an error occurs
  */
-IFF_Chunk *IFF_readChunk(FILE *file, const char *formType, const IFF_Extension *extension, const unsigned int extensionLength);
+IFF_Chunk *IFF_readChunk(io_context *context, const char *formType, const IFF_Extension *extension, const unsigned int extensionLength);
 
 /**
  * Writes a chunk hierarchy to a given file descriptor.

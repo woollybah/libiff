@@ -55,7 +55,7 @@ int IFF_compareId(const IFF_ID id1, const char* id2);
  * @param attributeName The name of the attribute that is examined (used for error reporting)
  * @return TRUE if the ID is succesfully read, else FALSE
  */
-int IFF_readId(FILE *file, IFF_ID id, const IFF_ID chunkId, const char *attributeName);
+int IFF_readId(io_context *context, IFF_ID id, const IFF_ID chunkId, const char *attributeName);
 
 /**
  * Writes an IFF id to a file

@@ -26,13 +26,36 @@
 #include "util.h"
 #include "error.h"
 
-IFF_Chunk *IFF_readFd(FILE *file, const IFF_Extension *extension, const unsigned int extensionLength)
+
+static int IFF_FILE_read(void *file, char *data, int size)
+{
+    return (int) fread(data,1,size,(FILE*) file);
+}
+
+static int IFF_FILE_write(void *file, char *data, int size)
+{
+    return (int) fwrite(data, 1, size, (FILE*) file);
+}
+
+static int IFF_FILE_eof(void *file)
+{
+    return feof((FILE*) file) || ferror((FILE *) file);
+}
+
+static io_callbacks IFF_FILE_callbacks =
+{
+    IFF_FILE_read,
+    IFF_FILE_write,
+    IFF_FILE_eof,
+};
+
+IFF_Chunk *IFF_readIo(io_context *context, const IFF_Extension *extension, const unsigned int extensionLength)
 {
     IFF_Chunk *chunk;
     int byte;
     
     /* Read the chunk */
-    chunk = IFF_readChunk(file, NULL, extension, extensionLength);
+    chunk = IFF_readChunk(context, NULL, extension, extensionLength);
     
     if(chunk == NULL)
     {
@@ -41,12 +64,20 @@ IFF_Chunk *IFF_readFd(FILE *file, const IFF_Extension *extension, const unsigned
     }
     
     /* We should have reached the EOF now */
-    
-    if((byte = fgetc(file)) != EOF)
-        IFF_error("WARNING: Trailing IFF contents found: %d!\n", byte);
+    if((context->io.eof)(context->userData) == 0)
+        IFF_error("WARNING: Trailing IFF contents found!\n");
 
     /* Return the parsed main chunk */
     return chunk;
+}
+
+IFF_Chunk *IFF_readFd(FILE *file, const IFF_Extension *extension, const unsigned int extensionLength)
+{
+    io_context context;
+    context.userData = file;
+    context.io = IFF_FILE_callbacks;
+
+    return IFF_readIo(&context, extension, extensionLength);
 }
 
 IFF_Chunk *IFF_read(const char *filename, const IFF_Extension *extension, const unsigned int extensionLength)

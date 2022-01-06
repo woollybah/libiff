@@ -42,7 +42,7 @@ struct IFF_FormExtension
     const char *chunkId;
     
     /** Function resposible for reading the given chunk */
-    IFF_Chunk* (*readChunk) (FILE *file, const IFF_Long chunkSize);
+    IFF_Chunk* (*readChunk) (io_context *context, const IFF_Long chunkSize);
     
     /** Function resposible for writing the given chunk */
     int (*writeChunk) (FILE *file, const IFF_Chunk *chunk);

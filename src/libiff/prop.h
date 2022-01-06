@@ -61,7 +61,7 @@ void IFF_addToProp(IFF_Prop *prop, IFF_Chunk *chunk);
  * @param extensionLength Length of the extension array
  * @return The PROP struct derived from the file, or NULL if an error has occured
  */
-IFF_Prop *IFF_readProp(FILE *file, const IFF_Long chunkSize, const IFF_Extension *extension, const unsigned int extensionLength);
+IFF_Prop *IFF_readProp(io_context *context, const IFF_Long chunkSize, const IFF_Extension *extension, const unsigned int extensionLength);
 
 /**
  * Writes a PROP chunk and its sub chunks to a file.

@@ -38,7 +38,7 @@ extern "C" {
  * @param attributeName The name of the attribute that is examined (used for error reporting)
  * @return TRUE if the value has been successfully read, else FALSE
  */
-int IFF_readUByte(FILE *file, IFF_UByte *value, const IFF_ID chunkId, const char *attributeName);
+int IFF_readUByte(io_context *context, IFF_UByte *value, const IFF_ID chunkId, const char *attributeName);
 
 /**
  * Writes an unsigned byte to a file.
@@ -60,7 +60,7 @@ int IFF_writeUByte(FILE *file, const IFF_UByte value, const IFF_ID chunkId, cons
  * @param attributeName The name of the attribute that is examined (used for error reporting)
  * @return TRUE if the value has been successfully read, else FALSE
  */
-int IFF_readUWord(FILE *file, IFF_UWord *value, const IFF_ID chunkId, const char *attributeName);
+int IFF_readUWord(io_context *context, IFF_UWord *value, const IFF_ID chunkId, const char *attributeName);
 
 /**
  * Writes an unsigned word to a file.
@@ -82,7 +82,7 @@ int IFF_writeUWord(FILE *file, const IFF_UWord value, const IFF_ID chunkId, cons
  * @param attributeName The name of the attribute that is examined (used for error reporting)
  * @return TRUE if the value has been successfully read, else FALSE
  */
-int IFF_readWord(FILE *file, IFF_Word *value, const IFF_ID chunkId, const char *attributeName);
+int IFF_readWord(io_context *context, IFF_Word *value, const IFF_ID chunkId, const char *attributeName);
 
 /**
  * Writes a signed word to a file.
@@ -104,7 +104,7 @@ int IFF_writeWord(FILE *file, const IFF_Word value, const IFF_ID chunkId, const 
  * @param attributeName The name of the attribute that is examined (used for error reporting)
  * @return TRUE if the value has been successfully read, else FALSE
  */
-int IFF_readULong(FILE* file, IFF_ULong *value, const IFF_ID chunkId, const char *attributeName);
+int IFF_readULong(io_context *context, IFF_ULong *value, const IFF_ID chunkId, const char *attributeName);
 
 /**
  * Writes an unsigned long to a file.
@@ -126,7 +126,7 @@ int IFF_writeULong(FILE* file, const IFF_ULong value, const IFF_ID chunkId, cons
  * @param attributeName The name of the attribute that is examined (used for error reporting)
  * @return TRUE if the value has been successfully read, else FALSE
  */
-int IFF_readLong(FILE* file, IFF_Long *value, const IFF_ID chunkId, const char *attributeName);
+int IFF_readLong(io_context *context, IFF_Long *value, const IFF_ID chunkId, const char *attributeName);
 
 /**
  * Writes a signed long to a file.
@@ -147,7 +147,7 @@ int IFF_writeLong(FILE* file, const IFF_Long value, const IFF_ID chunkId, const 
  * @param chunkId A 4 character chunk id in which the operation takes place (used for error reporting)
  * @return TRUE if the byte has been successfully read, else FALSE
  */
-int IFF_readPaddingByte(FILE *file, const IFF_Long chunkSize, const IFF_ID chunkId);
+int IFF_readPaddingByte(io_context *context, const IFF_Long chunkSize, const IFF_ID chunkId);
 
 /**
  * Writes a padding byte to a chunk with an odd size.

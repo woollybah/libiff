@@ -45,37 +45,37 @@ IFF_Chunk *IFF_allocateChunk(const char *chunkId, const size_t chunkSize)
     return chunk;
 }
 
-IFF_Chunk *IFF_readChunk(FILE *file, const char *formType, const IFF_Extension *extension, const unsigned int extensionLength)
+IFF_Chunk *IFF_readChunk(io_context *context, const char *formType, const IFF_Extension *extension, const unsigned int extensionLength)
 {
     IFF_ID chunkId;
     IFF_Long chunkSize;
     
     /* Read chunk id */
-    if(!IFF_readId(file, chunkId, "", chunkId))
+    if(!IFF_readId(context, chunkId, "", chunkId))
 	return NULL;
     
     /* Read chunk size */
-    if(!IFF_readLong(file, &chunkSize, chunkId, "chunkSize"))
+    if(!IFF_readLong(context, &chunkSize, chunkId, "chunkSize"))
 	return NULL;
 
     /* Read remaining bytes (procedure depends on chunk id type) */
     
     if(IFF_compareId(chunkId, "FORM") == 0)
-	return (IFF_Chunk*)IFF_readForm(file, chunkSize, extension, extensionLength);
+	return (IFF_Chunk*)IFF_readForm(context, chunkSize, extension, extensionLength);
     else if(IFF_compareId(chunkId, "CAT ") == 0)
-	return (IFF_Chunk*)IFF_readCAT(file, chunkSize, extension, extensionLength);
+	return (IFF_Chunk*)IFF_readCAT(context, chunkSize, extension, extensionLength);
     else if(IFF_compareId(chunkId, "LIST") == 0)
-	return (IFF_Chunk*)IFF_readList(file, chunkSize, extension, extensionLength);
+	return (IFF_Chunk*)IFF_readList(context, chunkSize, extension, extensionLength);
     else if(IFF_compareId(chunkId, "PROP") == 0)
-	return (IFF_Chunk*)IFF_readProp(file, chunkSize, extension, extensionLength);
+	return (IFF_Chunk*)IFF_readProp(context, chunkSize, extension, extensionLength);
     else
     {
 	const IFF_FormExtension *formExtension = IFF_findFormExtension(formType, chunkId, extension, extensionLength);
 	
 	if(formExtension == NULL)
-	    return (IFF_Chunk*)IFF_readRawChunk(file, chunkId, chunkSize);
+	    return (IFF_Chunk*)IFF_readRawChunk(context, chunkId, chunkSize);
 	else
-	    return formExtension->readChunk(file, chunkSize);
+	    return formExtension->readChunk(context, chunkSize);
     }
 }
 

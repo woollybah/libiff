@@ -30,6 +30,16 @@ extern "C" {
 #endif
 
 /**
+ * Reads an IFF file from a given io context. The resulting chunk must be freed using IFF_free().
+ *
+ * @param context The io context
+ * @param extension Extension array which specifies how application file format chunks can be handled
+ * @param extensionLength Length of the extension array
+ * @return A chunk hierarchy derived from the IFF file, or NULL if an error occurs
+ */
+IFF_Chunk *IFF_readIo(io_context *context, const IFF_Extension *extension, const unsigned int extensionLength);
+
+/**
  * Reads an IFF file from a given file descriptor. The resulting chunk must be freed using IFF_free().
  *
  * @param file File descriptor of the file

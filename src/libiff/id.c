@@ -33,9 +33,10 @@ int IFF_compareId(const IFF_ID id1, const char* id2)
     return strncmp(id1, id2, IFF_ID_SIZE);
 }
 
-int IFF_readId(FILE *file, IFF_ID id, const IFF_ID chunkId, const char *attributeName)
+int IFF_readId(io_context *context, IFF_ID id, const IFF_ID chunkId, const char *attributeName)
 {
-    if(fread(id, IFF_ID_SIZE, 1, file) == 1)
+    
+    if((context->io.read)(context->userData,id,IFF_ID_SIZE) == IFF_ID_SIZE)
 	return TRUE;
     else
     {

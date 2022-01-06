@@ -84,7 +84,7 @@ void IFF_setTextData(IFF_RawChunk *rawChunk, const char *text);
  * @param chunkSize Size of the chunk data
  * @return The raw chunk struct derived from the file, or NULL if an error has occured
  */
-IFF_RawChunk *IFF_readRawChunk(FILE *file, const char *chunkId, const IFF_Long chunkSize);
+IFF_RawChunk *IFF_readRawChunk(io_context *context, const char *chunkId, const IFF_Long chunkSize);
 
 /**
  * Writes the given raw chunk to a file descriptor.

@@ -53,14 +53,14 @@ void IFF_addToGroup(IFF_Group *group, IFF_Chunk *chunk)
     chunk->parent = group;
 }
 
-IFF_Group *IFF_readGroup(FILE *file, const char *chunkId, const IFF_Long chunkSize, const char *groupTypeName, const int groupTypeIsFormType, const IFF_Extension *extension, const unsigned int extensionLength)
+IFF_Group *IFF_readGroup(io_context *context, const char *chunkId, const IFF_Long chunkSize, const char *groupTypeName, const int groupTypeIsFormType, const IFF_Extension *extension, const unsigned int extensionLength)
 {
     IFF_ID groupType;
     IFF_Group *group;
     char *formType;
     
     /* Read group type */
-    if(!IFF_readId(file, groupType, chunkId, groupTypeName))
+    if(!IFF_readId(context, groupType, chunkId, groupTypeName))
 	return NULL;
 
     /* Create new group */
@@ -77,7 +77,7 @@ IFF_Group *IFF_readGroup(FILE *file, const char *chunkId, const IFF_Long chunkSi
     while(group->chunkSize < chunkSize)
     {
 	/* Read sub chunk */
-	IFF_Chunk *chunk = IFF_readChunk(file, formType, extension, extensionLength);
+	IFF_Chunk *chunk = IFF_readChunk(context, formType, extension, extensionLength);
 	
 	if(chunk == NULL)
 	{

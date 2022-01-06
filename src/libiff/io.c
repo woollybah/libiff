@@ -22,13 +22,18 @@
 #include "io.h"
 #include "error.h"
 
-int IFF_readUByte(FILE *file, IFF_UByte *value, const IFF_ID chunkId, const char *attributeName)
+int IFF_readUByte(io_context * context, IFF_UByte *value, const IFF_ID chunkId, const char *attributeName)
 {
-    int byte = fgetc(file);
-    
-    if(byte == EOF)
+    if((context->io.eof)(context->userData))
     {
-	IFF_readError(chunkId, attributeName);
+    IFF_readError(chunkId, attributeName);
+	return FALSE;
+    }
+    char byte;
+
+    if((context->io.read)(context->userData,&byte,1) == 0)
+    {
+    IFF_readError(chunkId, attributeName);
 	return FALSE;
     }
     else
@@ -49,11 +54,11 @@ int IFF_writeUByte(FILE *file, const IFF_UByte value, const IFF_ID chunkId, cons
 	return TRUE;
 }
 
-int IFF_readUWord(FILE *file, IFF_UWord *value, const IFF_ID chunkId, const char *attributeName)
+int IFF_readUWord(io_context * context, IFF_UWord *value, const IFF_ID chunkId, const char *attributeName)
 {
     IFF_UWord readUWord;
     
-    if(fread(&readUWord, sizeof(IFF_UWord), 1, file) == 1)
+    if((context->io.read)(context->userData,&readUWord,sizeof(IFF_UWord)) > 0)
     {
 #if IFF_BIG_ENDIAN == 1
 	*value = readUWord;
@@ -89,11 +94,11 @@ int IFF_writeUWord(FILE *file, const IFF_UWord value, const IFF_ID chunkId, cons
     }
 }
 
-int IFF_readWord(FILE *file, IFF_Word *value, const IFF_ID chunkId, const char *attributeName)
+int IFF_readWord(io_context * context, IFF_Word *value, const IFF_ID chunkId, const char *attributeName)
 {
     IFF_Word readWord;
     
-    if(fread(&readWord, sizeof(IFF_Word), 1, file) == 1)
+    if((context->io.read)(context->userData,&readWord,sizeof(IFF_Word)) > 0)
     {
 #if IFF_BIG_ENDIAN == 1
 	*value = readWord;
@@ -127,11 +132,11 @@ int IFF_writeWord(FILE *file, const IFF_Word value, const IFF_ID chunkId, const 
     }
 }
 
-int IFF_readULong(FILE* file, IFF_ULong *value, const IFF_ID chunkId, const char *attributeName)
+int IFF_readULong(io_context * context, IFF_ULong *value, const IFF_ID chunkId, const char *attributeName)
 {
     IFF_ULong readValue;
     
-    if(fread(&readValue, sizeof(IFF_ULong), 1, file) == 1)
+    if((context->io.read)(context->userData,&readValue,sizeof(IFF_ULong)) > 0)
     {
 #if IFF_BIG_ENDIAN == 1
 	*value = readValue;
@@ -166,11 +171,11 @@ int IFF_writeULong(FILE *file, const IFF_ULong value, const IFF_ID chunkId, cons
     }
 }
 
-int IFF_readLong(FILE* file, IFF_Long *value, const IFF_ID chunkId, const char *attributeName)
+int IFF_readLong(io_context * context, IFF_Long *value, const IFF_ID chunkId, const char *attributeName)
 {
     IFF_Long readValue;
     
-    if(fread(&readValue, sizeof(IFF_Long), 1, file) == 1)
+    if((context->io.read)(context->userData,&readValue,sizeof(IFF_Long)) > 0)
     {
 #if IFF_BIG_ENDIAN == 1
 	*value = readValue;
@@ -205,13 +210,19 @@ int IFF_writeLong(FILE *file, const IFF_Long value, const IFF_ID chunkId, const 
     }
 }
 
-int IFF_readPaddingByte(FILE *file, const IFF_Long chunkSize, const IFF_ID chunkId)
+int IFF_readPaddingByte(io_context * context, const IFF_Long chunkSize, const IFF_ID chunkId)
 {
     if(chunkSize % 2 != 0) /* Check whether the chunk size is an odd number */
     {
-        int byte = fgetc(file); /* Read padding byte */
+        int err = (context->io.eof)(context->userData);
+        char byte;
+
+        if(!err)
+        {
+            err = (context->io.read)(context->userData,&byte,1) == 0; /* Read padding byte */
+        }
 	
-        if(byte == EOF) /* We shouldn't have reached the EOF yet */
+        if(err) /* We shouldn't have reached the EOF yet */
         {
     	    IFF_error("Unexpected end of file, while reading padding byte of '");
     	    IFF_errorId(chunkId);
